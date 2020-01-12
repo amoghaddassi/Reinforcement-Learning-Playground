@@ -1,19 +1,25 @@
+import numpy as np
+
 class World:
 	"""Class for the environment of grid world. Will be a NxN grid with 2 terminal states"""
-	def __init__(self, N, win_state = (0, 0), lose_state = (1, 0)):
+	def __init__(self, N, win_state = (0, 0), lose_state = (10, 0)):
 		self.N = N
 		self.x = int(self.N / 2)
 		self.y = int(self.N / 2)
 		self.win_state = win_state #reward +1 at this point
 		self.lose_state = lose_state #reward -1 at this point
-		
+	
+	def state(self):
+		"""Returns the current state of the agent."""
+		return (self.x, self.y)	
+	
 	def step(self, action):
 		"""Returns a 3 tuple following the standard OpenAI Gym API:
 		ret[0]: new state observation.
 		ret[1]: reward
 		ret[2]: done, true if the env has completed execution"""
 		#compute new state
-		observation = self.update_state(action)
+		observation = self.move_state(action)
 		self.x, self.y = observation[0], observation[1]
 		#compute reward
 		reward = self.get_reward()
@@ -26,13 +32,24 @@ class World:
 
 	def get_reward(self, curr_state = None):
 		"""+- 1 reward at the terminal states. -.02 at all others."""
+		def state_eq(state1, state2):
+			"""Comparison function for two states."""
+			if state1[0] == state2[0] and state1[1] == state2[1]:
+				return True
+			return False
+		
 		if not curr_state:
 			curr_state = (self.x, self.y)
-		if curr_state == self.win_state: return 1
-		elif curr_state == self.lose_state: return -1
-		else: return -.02
+		if state_eq(curr_state, self.win_state): return 1
+		elif state_eq(curr_state, self.lose_state): return -1 
+		else: return -1
 
-	def move_state(self, action, curr_state = None):
+	def move_state(self, action, curr_state = None, defer_prob = .3):
+		#check if deferring
+		defer = np.random.choice(range(100))
+		if defer < defer_prob * 100:
+			#returns the result of taking a random move
+			return self.move_state(np.random.choice(range(4)), curr_state, 0)
 		#0 - move left
 		#1 - move right
 		#2 - move up

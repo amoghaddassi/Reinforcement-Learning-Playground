@@ -1,8 +1,7 @@
 import numpy as np
-from world import World
 
-class PolicyIterationAgent:
-	def __init__(self, N, discount = .98):
+class Agent:
+	def __init__(self, N=4, discount = .98):
 		"""Initializes a random starting policy and a zero value vector."""
 		self.N = N
 		self.discount = discount
@@ -15,7 +14,7 @@ class PolicyIterationAgent:
 			for j in range(self.N):
 				self.policy[i][j] = np.random.choice(range(4))
 
-	def compute_policy(self, iter_tolerance = .01, max_iter = 1000):
+	def policy_iteration(self, iter_tolerance = .01, max_iter = 10000):
 		"""Runs the policy iteration algo till convergance starting from the current policy"""
 		done = False
 		runs = 0
@@ -75,5 +74,5 @@ class PolicyIterationAgent:
 		return action
 
 	def act(self, state):
-		return self.policy[self[0]][self[1]]
+		return self.policy[state[0]][state[1]]
 
