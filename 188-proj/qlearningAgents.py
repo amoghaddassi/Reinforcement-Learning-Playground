@@ -56,7 +56,7 @@ class QLearningAgent(ReinforcementAgent):
 	def actionValueMove(self, state):
 		"""Returns an action/value tuple for the next 2 methods."""
 		best = None
-		val = 0
+		val = -float('inf')
 		if state not in self.q_table:
 			return self.getAction(state), 0
 		for action in self.getLegalActions(state):
